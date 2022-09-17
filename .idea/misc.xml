@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2730496453900709" />
         <entry key="app/src/main/res/layout/cat_list_item.xml" value="0.2730496453900709" />
+        <entry key="app/src/main/res/layout/fragment_cat_detail.xml" value="0.2730496453900709" />
         <entry key="app/src/main/res/layout/fragment_cat_list.xml" value="0.15501519756838905" />
       </map>
     </option>

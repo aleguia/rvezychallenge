@@ -8,5 +8,14 @@
         android:id="@+id/CatListFragment"
         android:name="com.leguia.rvezy.view.CatListFragment"
         tools:layout="@layout/fragment_cat_list">
+        <action
+            android:id="@+id/list_to_detail"
+            app:destination="@id/CatDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/CatDetailFragment"
+        android:name="com.leguia.rvezy.view.CatDetailFragment"
+        tools:layout="@layout/fragment_cat_detail">
     </fragment>
 </navigation>

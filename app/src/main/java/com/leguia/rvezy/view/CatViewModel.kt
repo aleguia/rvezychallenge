@@ -11,19 +11,19 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 @HiltViewModel
-class CatListViewModel @Inject constructor(private val networkService: CatApi) : ViewModel() {
+class CatViewModel @Inject constructor(private val networkService: CatApi) : ViewModel() {
     // TODO: Implement the ViewModel
     private val _catList = MutableLiveData<List<CatResponse>>()
+    val catSelected = MutableLiveData<CatResponse>()
     val catList: LiveData<List<CatResponse>>
         get() = _catList
 
     init {
-        networkService.getCatList()
+        val disposable = networkService.getCatList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ catListResponse ->
-
-                _catList.value = catListResponse
+                _catList.postValue(catListResponse)
 
             }, { error ->
 
@@ -32,5 +32,7 @@ class CatListViewModel @Inject constructor(private val networkService: CatApi) :
             }, {
                 println("COMPLETES!")
             })
+
     }
+
 }
