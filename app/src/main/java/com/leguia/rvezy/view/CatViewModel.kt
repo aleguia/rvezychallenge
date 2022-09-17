@@ -1,9 +1,11 @@
 package com.leguia.rvezy.view
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.arch.core.util.Function
+import androidx.lifecycle.*
+import androidx.paging.*
+import androidx.paging.rxjava2.observable
 import com.leguia.rvezy.data.CatApi
+import com.leguia.rvezy.data.CatPagingSource
 import com.leguia.rvezy.data.CatResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -11,28 +13,27 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 @HiltViewModel
-class CatViewModel @Inject constructor(private val networkService: CatApi) : ViewModel() {
+class CatViewModel @Inject constructor(private val pagingService: CatPagingSource) : ViewModel() {
     // TODO: Implement the ViewModel
-    private val _catList = MutableLiveData<List<CatResponse>>()
+    private val _catList = MutableLiveData<PagingData<CatResponse>>()
     val catSelected = MutableLiveData<CatResponse>()
-    val catList: LiveData<List<CatResponse>>
-        get() = _catList
+    val catList: LiveData<PagingData<CatResponse>>
+        get() = pager
+    private val pager = Pager(
+        config = PagingConfig(10),
+        pagingSourceFactory = { pagingService }
+    ).liveData
+    .cachedIn(viewModelScope)
 
-    init {
-        val disposable = networkService.getCatList()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ catListResponse ->
-                _catList.postValue(catListResponse)
-
-            }, { error ->
-
-                println("an error ocurred: ${error}")
-
-            }, {
-                println("COMPLETES!")
-            })
-
-    }
+//    init {
+//        val disposable = pager
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe(
+//                { _catList.postValue(it) },
+//                { error ->  println("an error ocurred: ${error}") },
+//                { println("COMPLETES!")}
+//            )
+//
+//    }
 
 }

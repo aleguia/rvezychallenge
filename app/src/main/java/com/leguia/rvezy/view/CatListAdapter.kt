@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -13,7 +15,18 @@ import com.leguia.rvezy.data.CatResponse
 
 
 
-class CatListAdapter: RecyclerView.Adapter<CatListAdapter.CatViewHolder>() {
+class CatListAdapter: PagingDataAdapter<CatResponse, CatListAdapter.CatViewHolder>(REPO_COMPARATOR) {
+
+    companion object {
+        private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<CatResponse>() {
+            override fun areItemsTheSame(oldItem: CatResponse, newItem: CatResponse): Boolean =
+                oldItem == newItem
+
+            override fun areContentsTheSame(oldItem: CatResponse, newItem: CatResponse): Boolean =
+                oldItem == newItem
+        }
+    }
+
     private var cats = listOf<CatResponse>()
     var onCatClicked: ((CatResponse) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatListAdapter.CatViewHolder {
@@ -25,17 +38,8 @@ class CatListAdapter: RecyclerView.Adapter<CatListAdapter.CatViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: CatListAdapter.CatViewHolder, position: Int) {
-        val cat = cats.get(position)
-        holder.bind(cat)
-    }
 
-    override fun getItemCount(): Int {
-        return cats.size
-    }
-
-    fun setItems(items: List<CatResponse>){
-        cats = items
-        notifyDataSetChanged()
+        getItem(position)?.let { holder.bind(it) }
     }
 
     inner class CatViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -43,7 +47,7 @@ class CatListAdapter: RecyclerView.Adapter<CatListAdapter.CatViewHolder>() {
 
         init {
             itemView.setOnClickListener {
-                onCatClicked?.invoke(cats.get(adapterPosition))
+                getItem(absoluteAdapterPosition)?.let { item -> onCatClicked?.invoke(item) }
             }
         }
 

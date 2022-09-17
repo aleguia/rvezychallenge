@@ -2,6 +2,7 @@ package com.leguia.rvezy
 
 import com.leguia.rvezy.data.AuthInterceptor
 import com.leguia.rvezy.data.CatApi
+import com.leguia.rvezy.data.CatPagingSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +18,7 @@ import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import javax.inject.Singleton
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
@@ -29,7 +31,14 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun CatNetworkService(): CatApi {
+    fun pagingService():CatPagingSource {
+        return CatPagingSource(catNetworkService())
+    }
+
+
+    @Singleton
+    @Provides
+    fun catNetworkService(): CatApi {
 
         val baseUrl: String = "https://api.thecatapi.com/v1/"
         val httpClient = getUnsafeOkHttpClient()

@@ -1,17 +1,23 @@
 package com.leguia.rvezy.view
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import com.leguia.rvezy.R
 import com.leguia.rvezy.databinding.FragmentCatListBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CatListFragment : Fragment() {
@@ -51,8 +57,13 @@ class CatListFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(CatViewModel::class.java)
 
-        viewModel.catList.observe(viewLifecycleOwner, Observer {
-            catAdapter.setItems(it)
+        viewModel.catList.observe(viewLifecycleOwner, Observer { pagingData ->
+
+            lifecycleScope.launch {
+                catAdapter.submitData(pagingData)
+            }
+
+
         })
 
 
